@@ -1,0 +1,52 @@
+select * from Standard_Object_Mapping_Master
+
+insert into Standard_Object_Mapping_Master values(1,'WorkRequestType');
+insert into Standard_Object_Mapping_Master values(2,'WRDetails');
+insert into Standard_Object_Mapping_Master values(3,'Source');
+insert into Standard_Object_Mapping_Master values(4,'URL');
+insert into Standard_Object_Mapping_Master values(5,'Item');
+insert into Standard_Object_Mapping_Master values(6,'CUST_Primary');
+insert into Standard_Object_Mapping_Master values(7,'CUST_COID _');
+insert into Standard_Object_Mapping_Master values(8,'ECN_');
+
+insert into Standard_Object_Mapping_Master values(9,'CustID_');
+insert into Standard_Object_Mapping_Master values(10,'TieBreaker_');
+insert into Standard_Object_Mapping_Master values(11,'Name');
+insert into Standard_Object_Mapping_Master values(12,'First_Name');
+insert into Standard_Object_Mapping_Master values(13,'Middle_Name');
+insert into Standard_Object_Mapping_Master values(14,'Last_Name');
+insert into Standard_Object_Mapping_Master values(15,'DOB_');
+insert into Standard_Object_Mapping_Master values(16,'Status_');
+insert into Standard_Object_Mapping_Master values(17,'TIN_');
+insert into Standard_Object_Mapping_Master values(18,'TIN_Type');
+insert into Standard_Object_Mapping_Master values(19,'Acct_Primary');
+insert into Standard_Object_Mapping_Master values(20,'AccountNumber_');
+insert into Standard_Object_Mapping_Master values(21,'ACCT_COID_');
+insert into Standard_Object_Mapping_Master values(22,'PC_');
+insert into Standard_Object_Mapping_Master values(23,'Status_');
+
+select * from File_Info;
+
+insert into File_Info values(1,'Dup tin e&e');
+insert into File_Info values(2,'hkxra124');
+
+select * from  Axcis_Report_Column
+
+
+insert into Axcis_Report_Column values(1,'ECN',1,9);
+insert into Axcis_Report_Column values(2,'NAME',1,12);
+insert into Axcis_Report_Column values(3,'DOB',1,16);
+insert into Axcis_Report_Column values(4,'COID',2,8);
+insert into Axcis_Report_Column values(5,'PC',2,23);
+insert into Axcis_Report_Column values(6,'ACCOUNT_NUMBER',2,21);
+insert into Axcis_Report_Column values(7,'ACCOUNT_STATUS',2,24);
+
+select * from Issue_Type_Master;
+
+insert into Issue_Type_Master values(1,'TIN',1);
+
+insert into VALIDATION_MASTER  values(1,true,8,2)
+insert into VALIDATION_MASTER  values(2,true,11,2)
+insert into VALIDATION_MASTER  values(3,true,15,2)
+insert into VALIDATION_MASTER  values(4,true,17,2)
+insert into VALIDATION_MASTER  values(5,true,1,2)

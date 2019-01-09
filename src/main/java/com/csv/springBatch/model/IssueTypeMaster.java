@@ -11,24 +11,23 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 @Entity
-@Table(name="Issue_Type_Master")
+@Table(name = "Issue_Type_Master")
 public class IssueTypeMaster {
 
 	@Id
 	@GeneratedValue
-    @Column(name="id")
+	@Column(name = "id")
 	private int id;
-	@Column(name="issue_type")
+	@Column(name = "issue_type")
 	private String issueType;
-	@Column(name="file_id")
+	@Column(name = "file_id")
 	private int fileId;
 	@ManyToOne
-	@JoinColumn
-	(name="id", nullable=false,insertable = false, updatable = false)
+	@JoinColumn(name = "id", nullable = false, insertable = false, updatable = false)
 	private FileInfo fileInfo;
-	
+
 	public IssueTypeMaster() {
-		
+
 	}
 
 	public int getId() {
@@ -63,6 +62,4 @@ public class IssueTypeMaster {
 		this.fileInfo = fileInfo;
 	}
 
-	
-	
 }

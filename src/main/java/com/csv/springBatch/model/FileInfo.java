@@ -12,26 +12,24 @@ import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 @Entity
-@Table(name="File_Info")
+@Table(name = "File_Info")
 public class FileInfo {
-	
-
 
 	@Id
 	@GeneratedValue
 	@Column(name = "id")
 	private Long id;
-	@Column(name="file_name")
+	@Column(name = "file_name")
 	private String fileName;
-	
-	@OneToMany(mappedBy="fileInfo", fetch=FetchType.EAGER)
+
+	@OneToMany(mappedBy = "fileInfo", fetch = FetchType.EAGER)
 	private Set<AxcisReportColumn> axcisReportColumn;
-	
-	@OneToMany(mappedBy="fileInfo",fetch=FetchType.EAGER)
+
+	@OneToMany(mappedBy = "fileInfo", fetch = FetchType.EAGER)
 	private Set<IssueTypeMaster> issueTypeMaster;
-	
+
 	public FileInfo() {
-		
+
 	}
 
 	public long getId() {
@@ -49,9 +47,6 @@ public class FileInfo {
 	public void setFileName(String fileName) {
 		this.fileName = fileName;
 	}
-
-	
-	
 
 	public Set<AxcisReportColumn> getAxcisReportColumn() {
 		return axcisReportColumn;
@@ -73,10 +68,10 @@ public class FileInfo {
 		this.id = id;
 	}
 
-	/*@Override
-	public String toString() {
-		return "FileInfo [id=" + id + ", fileName=" + fileName + ", axcisReportColumn=" + axcisReportColumn
-				+ ", issueTypeMaster=" + issueTypeMaster + "]";
-	}*/
+	/*
+	 * @Override public String toString() { return "FileInfo [id=" + id +
+	 * ", fileName=" + fileName + ", axcisReportColumn=" + axcisReportColumn +
+	 * ", issueTypeMaster=" + issueTypeMaster + "]"; }
+	 */
 
 }

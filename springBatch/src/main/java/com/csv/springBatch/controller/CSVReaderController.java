@@ -42,84 +42,87 @@ public class CSVReaderController {
 	@Autowired
 	private FileInfoRepository fileInfoRepository;
 	private FileInfo fileInfo;
-	@RequestMapping(value="/")
-	public void readFile() throws FileNotFoundException, IOException{
+
+	@RequestMapping(value = "/")
+	public void readFile() throws FileNotFoundException, IOException {
 		List<Map<String, String>> csvInputList = new CopyOnWriteArrayList<>();
 
 		List<CSVRecord> csvRecords;
 		String fileName = "Duptine&e.csv";
-		String fileNameWithoutExtension=fileName.substring(0, fileName.lastIndexOf("."));	
-		fileInfo=getTheFileId(fileNameWithoutExtension);
-		System.out.println("ID ====>>>>"+fileInfo);
+		String fileNameWithoutExtension = fileName.substring(0, fileName.lastIndexOf("."));
+		fileInfo = getTheFileId(fileNameWithoutExtension);
+		System.out.println("ID ====>>>>" + fileInfo);
 		Map<String, Integer> headerMap;
 		CSVFormat format = CSVFormat.newFormat(',').withHeader();
 		try (BufferedReader inputReader = new BufferedReader(
 				new InputStreamReader(new FileInputStream(fileName), StandardCharsets.UTF_8))) {
-			CSVParser dataCSVParser = new CSVParser(inputReader, format);	         
-            csvRecords = dataCSVParser.getRecords(); 
+			CSVParser dataCSVParser = new CSVParser(inputReader, format);
+			csvRecords = dataCSVParser.getRecords();
 			headerMap = dataCSVParser.getHeaderMap();
 			System.out.println("header size:::: " + headerMap);
 		}
-		Set<AxcisReportColumn> axislist=fileInfo.getAxcisReportColumn();
-		//List<IssueTypeMaster> issueTypeMasterList=fileInfo.getIssueTypeMaster();
-		Map<String,String> mapColumn=new HashMap<>();
-		
-		for(AxcisReportColumn b:axislist){				
-			mapColumn.put(b.getColumns(),b.getStandardObjectMappingMaster().getCommonFormatFieldName());
+		Set<AxcisReportColumn> axislist = fileInfo.getAxcisReportColumn();
+		// List<IssueTypeMaster>
+		// issueTypeMasterList=fileInfo.getIssueTypeMaster();
+		Map<String, String> mapColumn = new HashMap<>();
+
+		for (AxcisReportColumn b : axislist) {
+			mapColumn.put(b.getColumns(), b.getStandardObjectMappingMaster().getCommonFormatFieldName());
 		}
-		Set<IssueTypeMaster> issueTypeMasterList=fileInfo.getIssueTypeMaster();
-		for(IssueTypeMaster issueTypeMaster:issueTypeMasterList ){
+		Set<IssueTypeMaster> issueTypeMasterList = fileInfo.getIssueTypeMaster();
+		for (IssueTypeMaster issueTypeMaster : issueTypeMasterList) {
 			mapColumn.put(issueTypeMaster.getIssueType(), issueTypeMaster.getIssueType());
 		}
-		System.out.println("Axcis map "+mapColumn);
-		 for(CSVRecord record : csvRecords){
-			 Map<String, String> inputMap = new LinkedHashMap<>();
-             for(Map.Entry<String, Integer> header : headerMap.entrySet()){
-            	 if(null!=mapColumn.get(header.getKey())){
-                 inputMap.put(mapColumn.get(header.getKey()), record.get(header.getValue()));
-            	 }
+		System.out.println("Axcis map " + mapColumn);
+		for (CSVRecord record : csvRecords) {
+			Map<String, String> inputMap = new LinkedHashMap<>();
+			for (Map.Entry<String, Integer> header : headerMap.entrySet()) {
+				if (null != mapColumn.get(header.getKey())) {
+					inputMap.put(mapColumn.get(header.getKey()), record.get(header.getValue()));
+				}
 
-             }
-             csvInputList.add(inputMap);
+			}
+			csvInputList.add(inputMap);
 
-             System.out.println("Input Map :"+inputMap);
-         }
-		 
+			System.out.println("Input Map :" + inputMap);
+		}
+
 		writeToCsv(csvInputList);
-			
-}
-	private void writeToCsv(List<Map<String, String>> csvInputList) throws IOException {
-		 
-	     //write  to a csv file
-        File file = new File("d:\\CommonFormat.csv");
-        // Create a File and append if it already exists.
-        Writer writer = new FileWriter(file, true);
-        Reader reader = new FileReader(file);
-        //Copy List of Map Object into CSV format at specified File location.
-        csvWriter(csvInputList, writer);
-        //Read CSV format from
-        csvInputList.forEach(System.out::println);
-		
+
 	}
+
+	private void writeToCsv(List<Map<String, String>> csvInputList) throws IOException {
+
+		// write to a csv file
+		File file = new File("d:\\CommonFormat.csv");
+		// Create a File and append if it already exists.
+		Writer writer = new FileWriter(file, true);
+		Reader reader = new FileReader(file);
+		// Copy List of Map Object into CSV format at specified File location.
+		csvWriter(csvInputList, writer);
+		// Read CSV format from
+		csvInputList.forEach(System.out::println);
+
+	}
+
 	public static void csvWriter(List<Map<String, String>> csvInputList, Writer writer) throws IOException {
-        CsvSchema schema = null;
-        CsvSchema.Builder schemaBuilder = CsvSchema.builder();
-        if (csvInputList != null && !csvInputList.isEmpty()) {
-            for (String col : csvInputList.get(0).keySet()) {
-                schemaBuilder.addColumn(col);
-            }
-            schema = schemaBuilder.build().withLineSeparator("\r").withHeader();
-        }
-        CsvMapper mapper = new CsvMapper();
-        mapper.writer(schema).writeValues(writer).writeAll(csvInputList);
-        writer.flush();
-    }
+		CsvSchema schema = null;
+		CsvSchema.Builder schemaBuilder = CsvSchema.builder();
+		if (csvInputList != null && !csvInputList.isEmpty()) {
+			for (String col : csvInputList.get(0).keySet()) {
+				schemaBuilder.addColumn(col);
+			}
+			schema = schemaBuilder.build().withLineSeparator("\r").withHeader();
+		}
+		CsvMapper mapper = new CsvMapper();
+		mapper.writer(schema).writeValues(writer).writeAll(csvInputList);
+		writer.flush();
+	}
 
 	private FileInfo getTheFileId(String fileNameWithoutExtension) {
-		
-		System.out.println("FILENAME===>>>"+fileNameWithoutExtension);
+
+		System.out.println("FILENAME===>>>" + fileNameWithoutExtension);
 		return fileInfoRepository.findByName(fileNameWithoutExtension);
-		
-		
+
 	}
 }

@@ -14,18 +14,18 @@ import com.csv.springBatch.Service.CsvReaderService;
 @SpringBootApplication
 public class SpringBatchApplication {
 	@Autowired
-	CsvReaderService service;
+	 CsvReaderService service;
 
 	public static void main(String[] args) throws FileNotFoundException, IOException {
-
-		SpringApplication.run(SpringBatchApplication.class, args);
+		
+	       SpringApplication.run(SpringBatchApplication.class, args);
 	}
-
 	@Bean
-	ApplicationRunner init() {
-		return arg -> {
+	ApplicationRunner init(){
+		return arg->{
 			service.readFile();
 		};
 	}
-
+	
 }
+

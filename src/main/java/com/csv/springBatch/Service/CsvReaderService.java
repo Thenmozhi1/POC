@@ -45,38 +45,40 @@ public class CsvReaderService {
 
 	public void readFile() throws FileNotFoundException, IOException {
 		Long startTime = System.currentTimeMillis();
-		System.out.println("startTime ====>>>>" + startTime); 
+		System.out.println("startTime ====>>>>" + startTime);
 		List<Map<String, String>> csvInputList = new CopyOnWriteArrayList<>();
 
 		List<CSVRecord> csvRecords;
 		// String fileName = "Duptine&e.csv";
-		//final String fileName="C:/Users/Thenmozhi/Desktop/IssueIntakePOC/HRX135.csv";
-		//String fileName="C:\\Users\\Thenmozhi\\Desktop\\IssueIntakePOC\\HRX135.csv";
-		 List list = listOfFiles();
-	        int size = list.size();
-	        String path = null;
-	        for(int i=0;i<size;i++) {
-	         
-	        	  path=(String) list.get(i);
-	        
-	        	 System.out.println("path ====>>>>" + path);	            
-	        }
-	        
-		//String fileName = "HRX135.csv";
-	        String fileName = path.substring(path.lastIndexOf('\\')+1);
-	        System.out.println("fileName ====>>>>" + fileName);	       
+		// final String
+		// fileName="C:/Users/Thenmozhi/Desktop/IssueIntakePOC/HRX135.csv";
+		// String
+		// fileName="C:\\Users\\Thenmozhi\\Desktop\\IssueIntakePOC\\HRX135.csv";
+		List list = listOfFiles();
+		int size = list.size();
+		String path = null;
+		for (int i = 0; i < size; i++) {
+
+			path = (String) list.get(i);
+
+			System.out.println("path ====>>>>" + path);
+		}
+
+		// String fileName = "HRX135.csv";
+		String fileName = path.substring(path.lastIndexOf('\\') + 1);
+		System.out.println("fileName ====>>>>" + fileName);
 		String fileNameWithoutExtension = fileName.substring(0, fileName.lastIndexOf("."));
 		fileInfo = getTheFileId(fileNameWithoutExtension);
 		System.out.println("ID ====>>>>" + fileInfo.getId());
 		Map<String, Integer> headerMap;
 		CSVFormat format = CSVFormat.newFormat(',').withHeader();
-		try (BufferedReader inputReader = new BufferedReader(
-				new InputStreamReader(new FileInputStream(path), StandardCharsets.UTF_8))) {
+		try (BufferedReader inputReader = new BufferedReader(new InputStreamReader(new FileInputStream(path), StandardCharsets.UTF_8))) {
 			CSVParser dataCSVParser = new CSVParser(inputReader, format);
 			csvRecords = dataCSVParser.getRecords();
 			headerMap = dataCSVParser.getHeaderMap();
 			System.out.println("header size:::: " + headerMap);
-			// inputReader.close();
+			
+			
 		}
 		Set<AxcisReportColumn> axislist = fileInfo.getAxcisReportColumn();
 
@@ -93,15 +95,15 @@ public class CsvReaderService {
 
 		Map<String, String> columnMapping = new HashMap<>();
 		for (Map.Entry<String, Integer> entry : headerMap.entrySet()) {
-			/*
-			 * String columnHeaderSplitedFrmInt =
-			 * getSubStringBeforeInteger(entry.getKey()); String lastString =
-			 * entry.getKey().substring(columnHeaderSplitedFrmInt.length()); //
-			 * System.out.println("columnHeaderSplitedFrmInt:: "
-			 * +" columnHeaderSplitedFrmInt+" lastString::"+lastString);
-			 * columnMapping.put(entry.getKey(),
-			 * mapColumn.get(columnHeaderSplitedFrmInt) + lastString); }
-			 */
+		
+//			  String columnHeaderSplitedFrmInt =
+//			  getSubStringBeforeInteger(entry.getKey()); String lastString =
+//			  entry.getKey().substring(columnHeaderSplitedFrmInt.length()); 
+//			   System.out.println("columnHeaderSplitedFrmInt:: "
+//			  +" columnHeaderSplitedFrmInt+" lastString::"+lastString);
+//			  columnMapping.put(entry.getKey(),
+//			  mapColumn.get(columnHeaderSplitedFrmInt) + lastString); }
+			 
 
 			if (fileInfo.getId() == 3) {
 				String regex = getSubStringBeforeFirstInteger(entry.getKey(), mapColumn);
@@ -109,17 +111,39 @@ public class CsvReaderService {
 
 					columnMapping.put(entry.getKey(), regex);
 				}
-			} else {
-				String columnHeaderSplitedFrmInt = getSubStringBeforeInteger(entry.getKey());
-				String lastString = entry.getKey().substring(columnHeaderSplitedFrmInt.length());
-				// System.out.println("columnHeaderSplitedFrmInt:: " +"
-				// columnHeaderSplitedFrmInt+" lastString::"+lastString);
-				columnMapping.put(entry.getKey(), mapColumn.get(columnHeaderSplitedFrmInt) + lastString);
 			}
+			else if(fileInfo.getId() == 4){
+				String regex1= getSubStringBeforeFirstIntegerforFileFour(entry.getKey(), mapColumn);
+				if (regex1 != null) {
+
+					columnMapping.put(entry.getKey(), regex1);
+				}
+			}
+			else if(fileInfo.getId() == 5){
+				String regex2= getSubStringBeforeFirstInteger(entry.getKey(), mapColumn);
+				if (regex2 != null) {
+
+					columnMapping.put(entry.getKey(), regex2);
+				}
+			}
+		
+			else  {	
+				
+				String str=mapColumn.get(entry.getKey());
+				System.out.println("str  ::  "+str);
+				
+				columnMapping.put(entry.getKey(), str.substring(0, str.lastIndexOf("_")));
+			}
+			
+
 		}
 
 		System.out.println("Column Mapping====>> " + columnMapping);
+		//System.out.println("starting Of File====>> " );
 		for (CSVRecord record : csvRecords) {
+		    String startingOfFile = record.get(0);
+		
+
 			Map<String, String> inputMap = new LinkedHashMap<>();
 
 			for (Map.Entry<String, Integer> header : headerMap.entrySet()) {
@@ -130,9 +154,11 @@ public class CsvReaderService {
 			}
 			csvInputList.add(inputMap);
 
-			//System.out.println("Input Map :" + inputMap);
+			// System.out.println("Input Map :" + inputMap);
 			// inputMap.clear();
 		}
+	//	System.out.println("ENDING Of File====>> " );
+
 
 		writeToCsv(csvInputList);
 
@@ -145,27 +171,57 @@ public class CsvReaderService {
 	}
 
 	
-	
-	  //Listing all the files present in folder
-	 private static List listOfFiles() {
-        List<String> results = new ArrayList<String>();
-//         File[] files = new File("f:\\csv").listFiles();
-        
-        File[] files = new File("G:\\code\\springBatch\\src\\main\\resources").listFiles();
 
 
-        for (File file : files) {
-            if (file.isFile()) {
-             
-             //Getting absolute path for the file and adding to list
-             String x=file.getAbsolutePath();
-             if(x.contains(".csv")) {
-                results.add(x);}
-            }
-        }
-//         System.out.println(results);
-        return results;
-    }
+
+	private String getSubStringBeforeFirstIntegerforFileFour(String key, Map<String, String> mapColumn) {
+		
+		Map<String, String> inputMap = new LinkedHashMap<>();
+		final String headerKey = key;
+
+		for (Map.Entry<String, String> mapping : mapColumn.entrySet()) {
+			final String regex = mapping.getKey();
+
+		Pattern pattern = Pattern.compile(regex);
+		Matcher matcher = pattern.matcher(headerKey);
+		if (matcher.find()) {
+			/*System.out.println("Entire match: " + matcher.group());
+			System.out.println("GROUP 0 ::" + matcher.group(1));
+			System.out.println("GROUP 1 ::" + matcher.group(2));*/
+			final String keyFormat = String.format("%s$2", mapColumn.get(regex));
+			System.out.println("keyFormat =+++++==>>" + keyFormat);
+
+			String hsahKey = matcher.replaceAll(keyFormat);
+			System.out.println("hsahKey =+++++==>>" + hsahKey);
+			return hsahKey;
+
+
+		}
+
+		}
+		return null;
+	}
+
+	// Listing all the files present in folder
+	private static List listOfFiles() {
+		List<String> results = new ArrayList<String>();
+		// File[] files = new File("f:\\csv").listFiles();
+
+		File[] files = new File("G:\\code\\springBatch\\src\\main\\resources").listFiles();
+
+		for (File file : files) {
+			if (file.isFile()) {
+
+				// Getting absolute path for the file and adding to list
+				String x = file.getAbsolutePath();
+				if (x.contains(".csv")) {
+					results.add(x);
+				}
+			}
+		}
+		// System.out.println(results);
+		return results;
+	}
 
 	private static String getSubStringBeforeFirstInteger(String key, Map<String, String> mapColumn) {
 
@@ -178,9 +234,11 @@ public class CsvReaderService {
 			Pattern pattern = Pattern.compile(regex);
 			Matcher matcher = pattern.matcher(headerKey);
 			if (matcher.find()) {
-				/*System.out.println("Entire match: " + matcher.group());
-				System.out.println("GROUP 0 ::" + matcher.group(0));
-				System.out.println("GROUP 1 ::" + matcher.group(1));*/
+				/*
+				 * System.out.println("Entire match: " + matcher.group());
+				 * System.out.println("GROUP 0 ::" + matcher.group(0));
+				 * System.out.println("GROUP 1 ::" + matcher.group(1));
+				 */
 				final String keyFormat = String.format("%s$1", mapColumn.get(regex));
 				// System.out.println("Keyformat====>"+keyFormat);
 				String hsahKey = matcher.replaceAll(keyFormat);
@@ -210,8 +268,8 @@ public class CsvReaderService {
 	private void writeToCsv(List<Map<String, String>> csvInputList) throws IOException {
 
 		// write to a csv file
-		 File file = new File("G:\\code\\BatchCSV\\src\\main\\resources\\CommonFormate.csv");
-		//File file = new File("src/main/resources/CommonFormate.csv");
+		File file = new File("G:\\eclipse\\csvbatchreader\\src\\main\\resources\\CommonFormate.csv");
+		// File file = new File("src/main/resources/CommonFormate.csv");
 		// Create a File and append if it already exists.
 		Writer writer = new FileWriter(file, true);
 		// Copy List of Map Object into CSV format at specified File location.
